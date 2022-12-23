@@ -106,6 +106,33 @@ fn rotate_matrix<Matrix: AsRef<[Row]>, Row: AsRef<[u32]>>(matrix: Matrix) -> Vec
     result
 }
 
+fn zero_matrix(row: usize, col: usize) -> Vec<Vec<u8>> {
+    vec![vec![0; row]; col]
+}
+
+// check if sub is a substring of the parent
+fn is_substring(parent: &str, sub: &str) -> bool {
+    for i in 0..parent.len() {
+        let mut j = 0;
+        while j < sub.len() {
+            if parent[i..=i].ne(&sub[j..=j]) {
+                break;
+            }
+            j += 1;
+        }
+
+        if j == sub.len() {
+            return true;
+        }
+    }
+    false
+}
+
+fn string_rotation(str1: &str, str2: &str) -> bool {
+    let double = format!("{}{}", str1, str1);
+    double.contains(str2)
+}
+
 #[cfg(test)]
 mod tests {
     use super::{rotate_matrix, string_has_unique_chars};
