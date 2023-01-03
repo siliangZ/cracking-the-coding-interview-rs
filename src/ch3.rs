@@ -1,3 +1,7 @@
+use std::collections::BinaryHeap;
+
+use chrono::{DateTime, Utc};
+
 struct Stack {
     arr: Vec<u8>,
     min: Vec<u8>,
@@ -89,8 +93,135 @@ impl MyQueue {
     }
 }
 
+fn sort_stack(mut stack: Vec<u8>) -> Vec<u8> {
+    if stack.is_empty() {
+        return vec![];
+    }
+    let mut temp = Vec::new();
+    while let Some(elem) = stack.pop() {
+        while let Some(last) = temp.last() {
+            if *last >= elem {
+                break;
+            }
+            if let Some(next) = temp.pop() {
+                stack.push(next);
+            }
+        }
+        temp.push(elem)
+    }
+    temp
+}
+
+#[derive(PartialEq, PartialOrd, Eq, Ord)]
+enum AnimalType {
+    Dog,
+    Cat,
+}
+
+#[derive(PartialEq, Eq)]
+struct Animal {
+    name: String,
+    animal_type: AnimalType,
+    arrival_time: DateTime<Utc>,
+}
+
+impl Ord for Animal {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        other.arrival_time.cmp(&self.arrival_time)
+    }
+}
+
+impl PartialOrd for Animal {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        // does this one matter?
+        Some(self.cmp(other))
+    }
+}
+
+struct AnimalShelter {
+    dogs: BinaryHeap<Animal>,
+    cats: BinaryHeap<Animal>,
+}
+
+impl AnimalShelter {
+    pub fn new() -> Self {
+        Self {
+            dogs: BinaryHeap::new(),
+            cats: BinaryHeap::new(),
+        }
+    }
+
+    pub fn enqueue(&mut self, animal: Animal) {
+        if animal.animal_type == AnimalType::Dog {
+            self.dogs.push(animal)
+        } else {
+            self.cats.push(animal)
+        }
+    }
+
+    pub fn dequeue_any(&mut self) -> Option<Animal> {
+        // check the oldest animal
+        if self.cats.is_empty() {
+            return self.dogs.pop();
+        }
+
+        if self.dogs.is_empty() {
+            return self.cats.pop();
+        }
+
+        if self.cats.peek() < self.dogs.peek() {
+            self.cats.pop()
+        } else {
+            self.dogs.pop()
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use chrono::Utc;
+
+    use super::{sort_stack, AnimalShelter};
+
+    #[test]
+    fn test_animal_shelter() {
+        let mut animal_shelter = AnimalShelter::new();
+        animal_shelter.enqueue(super::Animal {
+            name: String::from("D1"),
+            animal_type: super::AnimalType::Dog,
+            arrival_time: Utc::now(),
+        });
+        animal_shelter.enqueue(super::Animal {
+            name: String::from("D2"),
+            animal_type: super::AnimalType::Dog,
+            arrival_time: Utc::now(),
+        });
+        animal_shelter.enqueue(super::Animal {
+            name: String::from("D3"),
+            animal_type: super::AnimalType::Dog,
+            arrival_time: Utc::now(),
+        });
+
+        assert_eq!(
+            String::from("D1"),
+            animal_shelter.dequeue_any().unwrap().name
+        );
+        assert_eq!(
+            String::from("D2"),
+            animal_shelter.dequeue_any().unwrap().name
+        );
+        assert_eq!(
+            String::from("D3"),
+            animal_shelter.dequeue_any().unwrap().name
+        );
+    }
+
+    #[test]
+    fn test_sort_stack() {
+        let sorted = sort_stack(vec![34, 3, 31, 98, 92, 23]);
+        assert_eq!(vec![98, 92, 34, 31, 23, 3], sorted);
+    }
+
     #[test]
     fn ref_cmp() {
         let s1 = String::from("hello_world");
