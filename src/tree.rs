@@ -1,14 +1,14 @@
 use std::{cell::RefCell, collections::VecDeque, rc::Rc};
 
-type Edge = Rc<RefCell<TreeNode>>;
-struct TreeNode {
-    data: &'static str,
-    left: Option<Edge>,
-    right: Option<Edge>,
+type Edge<T> = Rc<RefCell<TreeNode<T>>>;
+pub struct TreeNode<T> {
+    data: T,
+    pub left: Option<Edge<T>>,
+    pub right: Option<Edge<T>>,
 }
 
-impl TreeNode {
-    pub fn new(data: &'static str) -> Self {
+impl<T> TreeNode<T> {
+    pub fn new(data: T) -> Self {
         Self {
             data,
             left: None,
@@ -17,7 +17,7 @@ impl TreeNode {
     }
 }
 
-fn queue_to_string(queue: Vec<Option<Edge>>) -> String {
+fn queue_to_string(queue: Vec<Option<Edge<&str>>>) -> String {
     let new: Vec<&str> = queue
         .into_iter()
         .map(|v| match v {
@@ -28,7 +28,7 @@ fn queue_to_string(queue: Vec<Option<Edge>>) -> String {
     new.join(",")
 }
 
-fn deserialize(root: Rc<RefCell<TreeNode>>) -> String {
+fn deserialize(root: Rc<RefCell<TreeNode<&str>>>) -> String {
     let mut queue = vec![Some(root)];
     let mut index = 0;
     while index < queue.len() {
@@ -48,7 +48,7 @@ fn deserialize(root: Rc<RefCell<TreeNode>>) -> String {
     queue_to_string(queue)
 }
 
-fn serialize(input: &'static str) -> Rc<RefCell<TreeNode>> {
+fn serialize(input: &'static str) -> Rc<RefCell<TreeNode<&str>>> {
     let data_arr: Vec<&str> = input.split(",").collect();
     let mut root = Rc::new(RefCell::new(TreeNode::new(data_arr[0])));
     let mut queue = VecDeque::new();
