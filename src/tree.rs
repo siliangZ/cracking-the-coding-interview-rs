@@ -1,8 +1,10 @@
 use std::{cell::RefCell, collections::VecDeque, rc::Rc};
 
 type Edge<T> = Rc<RefCell<TreeNode<T>>>;
+
+#[derive(PartialEq, Eq)]
 pub struct TreeNode<T> {
-    data: T,
+    pub data: T,
     pub left: Option<Edge<T>>,
     pub right: Option<Edge<T>>,
 }
