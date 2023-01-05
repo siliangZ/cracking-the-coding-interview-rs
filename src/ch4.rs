@@ -1,5 +1,6 @@
 use std::{
     cell::{Ref, RefCell},
+    collections::VecDeque,
     rc::Rc,
 };
 
@@ -52,7 +53,27 @@ fn inorder_traversal_recursion(root: Rc<RefCell<TreeNode<u32>>>, result: &mut Ve
     }
 }
 
-fn level_traversal(root: Rc<RefCell<TreeNode<u32>>>) -> Vec<u32> {}
+fn level_traversal(root: Rc<RefCell<TreeNode<u32>>>) -> Vec<u32> {
+    let mut result = Vec::new();
+
+    let mut queue = VecDeque::new();
+    queue.push_back(root);
+    let mut index = 0;
+    while index < queue.len() {
+        let node = queue[index].clone();
+        index += 1;
+        if let Some(left) = node.borrow().left.clone() {
+            queue.push_back(left)
+        }
+
+        let right_borrow = node.borrow();
+        if let Some(right) = right_borrow.right.clone() {
+            queue.push_back(right)
+        }
+    }
+
+    result
+}
 
 fn inorder_traversal(root: Rc<RefCell<TreeNode<u32>>>) -> Vec<u32> {
     let mut result = Vec::new();
