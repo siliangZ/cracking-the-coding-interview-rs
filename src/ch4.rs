@@ -108,6 +108,26 @@ fn inorder_traversal(root: Rc<RefCell<TreeNode<u32>>>) -> Vec<u32> {
     result
 }
 
+fn check_balanced(root: Rc<RefCell<TreeNode<u32>>>) -> bool {
+    let (left_height, is_left_balanced) = root
+        .borrow()
+        .left
+        .clone()
+        .map(|node| (TreeNode::any_height(node.clone()), check_balanced(node)))
+        .unwrap_or((0, true));
+    let (right_height, is_right_balanced) = root
+        .borrow()
+        .right
+        .clone()
+        .map(|node| (TreeNode::any_height(node.clone()), check_balanced(node)))
+        .unwrap_or((0, true));
+
+    if is_left_balanced && is_right_balanced && right_height.abs_diff(left_height) <= 1 {
+        return true;
+    }
+    false
+}
+
 #[cfg(test)]
 mod tests {
     use std::{cell::RefCell, rc::Rc};

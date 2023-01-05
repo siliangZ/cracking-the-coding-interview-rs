@@ -17,6 +17,22 @@ impl<T> TreeNode<T> {
             right: None,
         }
     }
+
+    /// calculate the height of any tree that has node as root
+    pub fn any_height(node: Rc<RefCell<TreeNode<T>>>) -> usize {
+        let left_height = if let Some(left) = node.borrow().left.clone() {
+            TreeNode::<T>::any_height(left)
+        } else {
+            0
+        };
+        let right_height = if let Some(right) = node.borrow().right.clone() {
+            TreeNode::<T>::any_height(right)
+        } else {
+            0
+        };
+
+        std::cmp::max(left_height, right_height) + 1
+    }
 }
 
 fn queue_to_string(queue: Vec<Option<Edge<&str>>>) -> String {
