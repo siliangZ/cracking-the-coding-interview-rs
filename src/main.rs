@@ -3,6 +3,7 @@ mod ch2;
 mod ch3;
 mod ch4;
 mod cmp_impl;
+mod data_structure_leetcode;
 mod graph;
 mod linked_list;
 mod singly_linked;

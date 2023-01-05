@@ -1,4 +1,7 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{
+    cell::{Ref, RefCell},
+    rc::Rc,
+};
 
 use super::tree::TreeNode;
 fn minimal_tree(array: Vec<u32>) -> Option<Rc<RefCell<TreeNode<u32>>>> {
@@ -48,6 +51,8 @@ fn inorder_traversal_recursion(root: Rc<RefCell<TreeNode<u32>>>, result: &mut Ve
         inorder_traversal_recursion(right.clone(), result);
     }
 }
+
+fn level_traversal(root: Rc<RefCell<TreeNode<u32>>>) -> Vec<u32> {}
 
 fn inorder_traversal(root: Rc<RefCell<TreeNode<u32>>>) -> Vec<u32> {
     let mut result = Vec::new();
