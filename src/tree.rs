@@ -1,6 +1,42 @@
-use std::{cell::RefCell, collections::VecDeque, rc::Rc};
+use std::{
+    cell::RefCell,
+    collections::VecDeque,
+    rc::{Rc, Weak},
+};
 
 type Edge<T> = Rc<RefCell<TreeNode<T>>>;
+
+pub struct TreeNodeWithParent {
+    pub data: i32,
+    pub left: Option<Rc<RefCell<TreeNodeWithParent>>>,
+    pub right: Option<Rc<RefCell<TreeNodeWithParent>>>,
+    pub parent: Option<Weak<RefCell<TreeNodeWithParent>>>,
+}
+
+/// a funciton to compare two option object with a cmp_method
+fn compare_option<T, F>(op1: &Option<T>, op2: &Option<T>, cmp: F) -> bool
+where
+    F: Fn(&T, &T) -> bool,
+{
+    if op1.is_none() && op2.is_none() {
+        return true;
+    }
+
+    if let (Some(o1), Some(o2)) = (op1, op2) {
+        cmp(o1, o2)
+    } else {
+        return false;
+    }
+}
+
+impl PartialEq for TreeNodeWithParent {
+    fn eq(&self, other: &Self) -> bool {
+        self.data == other.data
+            && self.left == other.left
+            && self.right == other.right
+            && compare_option(&self.parent, &other.parent, |o1, o2| o1.ptr_eq(&o2))
+    }
+}
 
 #[derive(PartialEq, Eq)]
 pub struct TreeNode<T> {

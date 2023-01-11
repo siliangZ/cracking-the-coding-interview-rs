@@ -4,6 +4,8 @@ use std::{
     rc::Rc,
 };
 
+use crate::tree::TreeNodeWithParent;
+
 use super::tree::TreeNode;
 fn minimal_tree(array: Vec<u32>) -> Option<Rc<RefCell<TreeNode<u32>>>> {
     divide_and_conquer(0, array.len() - 1, &array)
@@ -126,6 +128,34 @@ fn check_balanced(root: Rc<RefCell<TreeNode<u32>>>) -> bool {
         return true;
     }
     false
+}
+
+// Q4.5 inorder traversal the BST and check if the result is in non-descending order
+
+fn find_successor_bst(
+    node: Rc<RefCell<TreeNodeWithParent>>,
+) -> Option<Rc<RefCell<TreeNodeWithParent>>> {
+    if let Some(mut root) = node.borrow().right.clone() {
+        // moved outside the while let expression to shorten the lifetime of Rec<'_,_> returned by borrow()
+        let mut r_n = root.borrow().left.clone();
+        while let Some(current) = r_n {
+            root = current;
+            r_n = root.borrow().left.clone();
+        }
+        Some(root)
+    } else {
+        // if the node doesn't have, retrace to its parent node to find the fist one that comes to the node from left branch
+        let mut current = node.clone();
+        let mut parent = current.borrow().parent.clone().and_then(|n| n.upgrade());
+        while let Some(inner) = parent.clone() {
+            if inner.eq(&current) {
+                break;
+            }
+            current = inner;
+            parent = current.borrow().parent.clone().and_then(|n| n.upgrade());
+        }
+        parent
+    }
 }
 
 #[cfg(test)]

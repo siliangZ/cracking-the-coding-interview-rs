@@ -5,3 +5,5 @@ struct Node {
     data: &'static str,
     neightbors: Vec<GraphNode>,
 }
+
+
