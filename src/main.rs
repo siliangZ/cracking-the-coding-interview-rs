@@ -1,13 +1,5 @@
-mod ch1;
-mod ch2;
-mod ch3;
-mod ch4;
-mod cmp_impl;
-mod data_structure_leetcode;
-mod graph;
-mod linked_list;
-mod singly_linked;
-pub mod tree;
 fn main() {
-    println!("Hello, world!");
+    let f = 0.42f32;
+    let f_b: u32 = unsafe { std::mem::transmute(f) };
+    println!("{:b}", f_b);
 }
