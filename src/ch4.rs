@@ -177,6 +177,7 @@ fn create_adjacent_map_and_indegree_dict(
     }
     (indegree_dict, adjacent_map)
 }
+
 // it is toplogical sorting
 fn build_order(projects: Vec<char>, dependencies: Vec<(char, char)>) -> Option<Vec<char>> {
     let (mut indegree_dict, adjacent_map) =
